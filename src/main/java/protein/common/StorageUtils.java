@@ -24,7 +24,7 @@ public class StorageUtils {
     @NotNull
     public static ListModel getFoldersList() {
         DefaultListModel listModel = new DefaultListModel();
-        Project currentProject = (Project)DataManager.getInstance().getDataContext().getData(DataConstants.PROJECT);
+        Project currentProject = getCurrentProject();
         if (currentProject != null) {
             VirtualFile[] contentRoots = ProjectRootManager.getInstance(currentProject).getContentRoots();
             for (VirtualFile virtualFile : contentRoots) {
@@ -49,9 +49,9 @@ public class StorageUtils {
         try {
             String projectPath;
             if (moduleName != null && !"".equals(moduleName)) {
-                projectPath = FileEditorManager.getInstance(ProjectManager.getInstance().getOpenProjects()[0]).getProject().getBasePath() + "/" + moduleName + "/src/main/java/";
+                projectPath = FileEditorManager.getInstance(getCurrentProject()).getProject().getBasePath() + "/" + moduleName + "/src/main/java/";
             } else {
-                projectPath = FileEditorManager.getInstance(ProjectManager.getInstance().getOpenProjects()[0]).getProject().getBasePath() + "/src/main/java/";
+                projectPath = FileEditorManager.getInstance(getCurrentProject()).getProject().getBasePath() + "/src/main/java/";
             }
             Path path = FileSystems.getDefault().getPath(projectPath);
             if (!Files.exists(path)) {
@@ -63,6 +63,10 @@ public class StorageUtils {
             e.printStackTrace();
             trackError(e);
         }
+    }
+
+    private static Project getCurrentProject() {
+        return (Project)DataManager.getInstance().getDataContext().getData(DataConstants.PROJECT);
     }
 
     public static String generateString(@Nullable String packageName, @NotNull com.squareup.kotlinpoet.TypeSpec classTypeSpec) {
